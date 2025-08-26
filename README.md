@@ -1,3 +1,3 @@
-Anh giải nén 2 file 1 file hình để test và 1 file weight
-Anh giải nén file Weight để lấy gói đã train ra, đưa đường dẫn vào code
-Hiện tại em chỉ test trong code nên phải đưa link hình vào img_path trong code
+- Anh giải nén 2 file 1 file hình để test và 1 file weight
+- Anh giải nén file Weight để lấy gói đã train ra, đưa đường dẫn vào code
+- Hiện tại em chỉ test trong code nên phải đưa link hình vào img_path trong code
