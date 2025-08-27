@@ -4,11 +4,13 @@ from ultralytics import YOLO
 from paddleocr import PaddleOCR
 import json
 from pdf_convert import pdf_to_images
+import logging
+logging.getLogger("ppocr").setLevel(logging.WARNING)
 
 # -------------------------
 # 1. Load model
 # -------------------------
-detector = YOLO("runs/detect/train/weights/best.pt")
+detector = YOLO("best.pt")
 ocr = PaddleOCR(use_angle_cls=True, lang='en')
 
 # -------------------------
@@ -81,8 +83,9 @@ def extract_text(img_path):
     for r in results[0].boxes:
         cls_id = int(r.cls[0])
         x1, y1, x2, y2 = map(int, r.xyxy[0])
+        
         crop = img[y1:y2, x1:x2]
-        ocr_result = ocr.ocr(crop)
+        ocr_result = ocr.ocr(crop, cls= True)
         text = " ".join([line[1][0] for line in ocr_result[0]]) if ocr_result[0] else ""
 
         if cls_id == 2:
@@ -146,23 +149,27 @@ def show_result(data, img_path):
         #     } 
         # ]
     }
-    print(json.dumps(result, indent=4, ensure_ascii=False))
+    return result   
 
 # -------------------------
 # 6. Main
 # -------------------------
+def show_result_json(result= dict):
+    print(json.dumps(result, indent=4, ensure_ascii=False))
 
 if __name__ == "__main__":
-    pdf_path = "CTY REICH.pdf"
+    pdf_path = "CTY REICH-trang\\CTY REICH-trang-2.pdf"
     img_paths = pdf_to_images(pdf_path)
     
     all_result = []
     for img_path in img_paths:
         data = extract_text(img_path)
-        result = show_result(data, img_path)
-        all_result.append(result)
+        result = show_result(data, img_path) # tạo dict
+        show_result_json(result) # show ra
+        all_result.append(result) # append vào list để lưu file
+        
 
     with open("result.json", "w", encoding="utf-8") as f:
         json.dump(all_result, f, indent=4, ensure_ascii=False)
 
-print(f"Done! {result_json}")
+print(f"Done!")
